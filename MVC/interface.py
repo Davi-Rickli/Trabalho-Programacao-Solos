@@ -43,6 +43,10 @@ class ReceitasView:
         self.entry_preparo = tk.Text(self.frm, width=50, height=6)
         self.entry_preparo.grid(row=4, column=1, sticky="we", pady=4)
 
+        tk.Label(self.frm, text="PH:").grid(row=4, column=0, sticky="e", padx=(0, 8), pady=4)
+        self.entry_rendimento = tk.Entry(self.frm, width=50)
+        self.entry_rendimento.grid(row=4, column=1, sticky="we", pady=4)
+
         # Botões
         botoes = tk.Frame(self.frm)
         botoes.grid(row=5, column=0, columnspan=2, pady=(6, 10))
