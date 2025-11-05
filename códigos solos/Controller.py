@@ -38,14 +38,16 @@ class CadernoCadastros:
         if os.path.exists(self.arquivo):
             with open(self.arquivo, "r", encoding="utf-8") as f:
                 _dados = json.load(f)
-                _Cadastros: List[Cadastro] = []
+                _Cadastros: List[CadernoCadastros] = []
                 for _r in _dados:
                     Cadastro = Cadastro(
-                        _r["nome"],
-                        _r["tipo"],
-                        _r["modo_preparo"],
-                        _r["rendimento"],
-                        _r["ingredientes"]
+                        _r["produtor"],
+                        _r["tipo_solos"],
+                        _r["fazenda"],
+                        _r["talhao"],
+                        _r["ph"],
+                        _r["p"],
+                        _r["k"]
                     )
                     _Cadastros.append(Cadastro)
                 return _Cadastros
@@ -56,11 +58,13 @@ class CadernoCadastros:
         """
         _dados = [
             {
-                "nome": _r.nome,
-                "tipo": _r.tipo,
-                "modo_preparo": _r.modo_preparo,
-                "rendimento": _r.rendimento,
-                "ingredientes": _r.ingredientes
+                "produtor": _r.produtor,
+                "tipo_solos": _r.tipo_solos,
+                "fazenda": _r.fazenda,
+                "talhao": _r.talhao,
+                "ph": _r.ph,
+                "p": _r.p,
+                "k": _r.k
             }
             for _r in self.Cadastros
         ]
@@ -70,11 +74,11 @@ class CadernoCadastros:
     def criar(self, Cadastro: Cadastro) -> bool:
         """
         Adiciona uma nova Cadastro se não existir
-        duplicidade de nome.
+        duplicidade de produtor.
         :return: True se adicionada ou False se duplicada.
         """
         try:
-            if self.buscar_por_nome(Cadastro.nome):
+            if self.buscar_por_produtor(Cadastro.produtor):
                 return False
             self.Cadastros.append(Cadastro)
             self.__salvar_Cadastros()
@@ -88,14 +92,14 @@ class CadernoCadastros:
 
     def alterar(self, _nova_Cadastro: Cadastro) -> bool:
         for _i, _Cadastro in enumerate(self.Cadastros):
-            if _Cadastro.nome.lower() == _nova_Cadastro.nome.lower():
+            if _Cadastro.produtor.lower() == _nova_Cadastro.produtor.lower():
                 self.Cadastros[_i] = _nova_Cadastro
                 self.__salvar_Cadastros()
                 return True
         return False
 
-    def deletar(self, _nome: str) -> bool:
-        _Cadastro = self.buscar_por_nome(_nome)
+    def deletar(self, _produtor: str) -> bool:
+        _Cadastro = self.buscar_por_produtor(_produtor)
         if _Cadastro:
             self.Cadastros.remove(_Cadastro)
             self.__salvar_Cadastros()
@@ -111,8 +115,8 @@ class CadernoCadastros:
             if _Cadastro.tem_ingrediente(_ingrediente.strip())
         ]
 
-    def buscar_por_nome(self, _nome: str) -> Cadastro | None:
+    def buscar_por_produtor(self, _produtor: str) -> Cadastro | None:
         for _Cadastro in self.Cadastros:
-            if _Cadastro.nome.lower() == _nome.lower():
+            if _Cadastro.produtor.lower() == _produtor.lower():
                 return _Cadastro
         return None
