@@ -1,0 +1,23 @@
+[
+    {
+        "nome": "mousse de maracujá",
+        "tipo": "Sobremesa",
+        "modo_preparo": "Junte todos ingredientes em um liquidificador.\nBata os ingredientes por 5 a 7 minutos.\nReserve o conteúdo em recipientes de sobremesa.\nLeve os recepientes à geladeira.\nApós 1 hora é só servir!!!",
+        "rendimento": 6,
+        "ingredientes": {
+            "leite condensado": "1 lata",
+            "creme de leite": "400 gramas",
+            "suco de maracujá": "200 mls"
+        }
+    },
+    {
+        "nome": "torta",
+        "tipo": "Sobremesa",
+        "modo_preparo": "misture tudo ggg hhh",
+        "rendimento": 10,
+        "ingredientes": {
+            "trigo": "2 xícaras",
+            "fermento em pó": "1 colher de chá"
+        }
+    }
+]
