@@ -1,10 +1,10 @@
 import json
 import os
 from typing import List
-from Cadastro import Cadastro
+from PerfilProdutor import PerfilProdutor
 
 
-class CadernoCadastros:
+class ControllerPerfilProdutor:
     """
     Classe responsável por gerenciar uma lista de Cadastros,
     realizando as tarefas de CRUD com persistência em
@@ -12,7 +12,7 @@ class CadernoCadastros:
     """
     def __init__(self, _arquivo="Cadastros.json"):
         self.arquivo = _arquivo
-        self.Cadastros = self.__carregar_Cadastros()
+        self.cadastros = self.__carregar_cadastros()
 
     @property
     def arquivo(self) -> str:
@@ -23,14 +23,14 @@ class CadernoCadastros:
         self.__arquivo = _arquivo
 
     @property
-    def Cadastros(self) -> List[Cadastro]:
+    def cadastros(self) -> List[PerfilProdutor]:
         return self.__Cadastros
 
-    @Cadastros.setter
-    def Cadastros(self, _list: List[Cadastro]) -> None:
+    @cadastros.setter
+    def cadastros(self, _list: List[PerfilProdutor]) -> None:
         self.__Cadastros = _list
 
-    def __carregar_Cadastros(self) -> List[Cadastro]:
+    def __carregar_cadastros(self) -> List[PerfilProdutor]:
         """
         Carrega as Cadastros do arquivo JSON,
         se o arquivo existir.
@@ -38,9 +38,9 @@ class CadernoCadastros:
         if os.path.exists(self.arquivo):
             with open(self.arquivo, "r", encoding="utf-8") as f:
                 _dados = json.load(f)
-                _Cadastros: List[CadernoCadastros] = []
+                _cadastros: List[ControllerPerfilProdutor] = []
                 for _r in _dados:
-                    Cadastro = Cadastro(
+                    _registro = PerfilProdutor(
                         _r["produtor"],
                         _r["tipo_solos"],
                         _r["fazenda"],
@@ -49,8 +49,8 @@ class CadernoCadastros:
                         _r["p"],
                         _r["k"]
                     )
-                    _Cadastros.append(Cadastro)
-                return _Cadastros
+                    _cadastros.append(_registro)
+                return _cadastros
 
     def __salvar_Cadastros(self):
         """
@@ -66,12 +66,12 @@ class CadernoCadastros:
                 "p": _r.p,
                 "k": _r.k
             }
-            for _r in self.Cadastros
+            for _r in self.cadastros
         ]
         with open(self.arquivo, "w", encoding="utf-8") as f:
             json.dump(_dados, f, ensure_ascii=False, indent=4)
 
-    def criar(self, Cadastro: Cadastro) -> bool:
+    def criar(self, _perfil: PerfilProdutor) -> bool:
         """
         Adiciona uma nova Cadastro se não existir
         duplicidade de produtor.
@@ -80,20 +80,20 @@ class CadernoCadastros:
         try:
             if self.buscar_por_produtor(Cadastro.produtor):
                 return False
-            self.Cadastros.append(Cadastro)
+            self.cadastros.append(Cadastro)
             self.__salvar_Cadastros()
             return True
         except ValueError as ve:
             print(ve)
             return False
 
-    def consultar(self, _i: int) -> Cadastro:
-        return self.Cadastros[_i]
+    def consultar(self, _i: int) -> PerfilProdutor:
+        return self.cadastros[_i]
 
-    def alterar(self, _nova_Cadastro: Cadastro) -> bool:
-        for _i, _Cadastro in enumerate(self.Cadastros):
+    def alterar(self, _nova_Cadastro: PerfilProdutor) -> bool:
+        for _i, _Cadastro in enumerate(self.cadastros):
             if _Cadastro.produtor.lower() == _nova_Cadastro.produtor.lower():
-                self.Cadastros[_i] = _nova_Cadastro
+                self.cadastros[_i] = _nova_Cadastro
                 self.__salvar_Cadastros()
                 return True
         return False
@@ -101,22 +101,22 @@ class CadernoCadastros:
     def deletar(self, _produtor: str) -> bool:
         _Cadastro = self.buscar_por_produtor(_produtor)
         if _Cadastro:
-            self.Cadastros.remove(_Cadastro)
+            self.cadastros.remove(_Cadastro)
             self.__salvar_Cadastros()
             return True
         return False
 
-    def filtrar_por_ingrediente(self, _ingrediente: str) -> List[Cadastro]:
-        if not _ingrediente.strip():
-            return self.Cadastros
+    def filtrar_por_fazenda(self, _fazenda: str) -> List[PerfilProdutor]:
+        if not _fazenda.strip():
+            return self.cadastros
         return [
             _Cadastro
-            for _Cadastro in self.Cadastros
-            if _Cadastro.tem_ingrediente(_ingrediente.strip())
+            for _Cadastro in self.cadastros
+            if _Cadastro.tem_fazenda(_fazenda.strip())
         ]
 
-    def buscar_por_produtor(self, _produtor: str) -> Cadastro | None:
-        for _Cadastro in self.Cadastros:
+    def buscar_por_produtor(self, _produtor: str) -> PerfilProdutor | None:
+        for _Cadastro in self.cadastros:
             if _Cadastro.produtor.lower() == _produtor.lower():
                 return _Cadastro
         return None

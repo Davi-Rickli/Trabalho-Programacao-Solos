@@ -1,15 +1,15 @@
 import tkinter as tk
 from tkinter import messagebox, filedialog, ttk
-from Cadastro import Cadastro
-from Controller import CadernoCadastros
+from PerfilProdutor import PerfilProdutor
+from Controller import ControllerPerfilProdutor
 
 
 class CadastrosView:
     def __init__(self):
         self.root = root
-        self.root.title("Caderno de Cadastros")
-        self.caderno = CadernoCadastros(_arquivo="Cadastro.json")
-        self.__filtro_ingrediente = tk.StringVar()
+        self.root.title("Cadastro Perfil Produtor")
+        self.listaPerfilProdutor = ControllerPerfilProdutor(_arquivo="Cadastros.json")
+        self.__filtro_fazenda = tk.StringVar()
         self.item_selecionado = ""
 
         # ======= Layout principal (grid 2 colunas) =======
@@ -60,9 +60,9 @@ class CadastrosView:
         filtro_frame = tk.Frame(self.frm)
         filtro_frame.grid(row=6, column=0, columnspan=2, sticky="we", pady=(10, 4))
         tk.Label(filtro_frame, text="Filtrar por Produtor:").pack(side="left")
-        filtro_entry = tk.Entry(filtro_frame, textvariable=self.__filtro_produtor, width=30)
+        filtro_entry = tk.Entry(filtro_frame, textvariable=self.__filtro_fazenda, width=30)
         filtro_entry.pack(side="left", padx=5)
-        tk.Button(filtro_frame, text="Filtrar", command=self.atualizar_listbox).pack(side="left", padx=5)
+        tk.Button(filtro_frame, text="Filtrar", command=self.__atualizar_listbox).pack(side="left", padx=5)
         tk.Button(filtro_frame, text="Limpar", command=self.__limpar_filtro).pack(side="left")
 
         # Lista de Cadastros
@@ -74,14 +74,14 @@ class CadastrosView:
         self.frm.grid_columnconfigure(1, weight=1)
 
         # Carregar lista
-        self.atualizar_listbox()
+        self.__atualizar_listbox()
 
     @property
-    def caderno(self) -> CadernoCadastros:
+    def listaPerfilProdutor(self) -> ControllerPerfilProdutor:
         return self.__caderno
 
-    @caderno.setter
-    def caderno(self, _caderno: CadernoCadastros) -> None:
+    @listaPerfilProdutor.setter
+    def listaPerfilProdutor(self, _caderno: ControllerPerfilProdutor) -> None:
         self.__caderno = _caderno
 
     @property
@@ -98,7 +98,7 @@ class CadastrosView:
     def __formatar_texto_produtor(self) -> str:
         return self.entry_produtor.get("1.0", tk.END).strip()
 
-    def __montar_Cadastro(self) -> Cadastro | None:
+    def __montar_Cadastro(self) -> PerfilProdutor | None:
         _nome = self.entry_nome.get().strip()
         if not _nome:
             messagebox.showerror("Erro", "Informe o nome da Cadastro.")
@@ -141,18 +141,19 @@ class CadastrosView:
                     messagebox.showerror("Erro", "Ingredientes no formato 'nome:quantidade; nome:quantidade; ...'")
                     return None
 
-        return Cadastro(_nome, _tipo, _preparo, _ph, _dict_ingredientes)
+        return PerfilProdutor(_nome, _tipo, _preparo, _ph, _dict_ingredientes)
 
-    def atualizar_listbox(self):
-        self.item_selecionado = self.__filtro_ingrediente.get().strip()
+    def __atualizar_listbox(self):
+        """self.item_selecionado = self.__filtro_fazenda.get().strip()
         if self.item_selecionado:
-            _lista_Cadastros = self.caderno.filtrar_por_ingrediente(self.item_selecionado)
+            _lista_Cadastros = self.listaPerfilProdutor.filtrar_por_ingrediente(self.item_selecionado)
         else:
-            _lista_Cadastros = self.caderno.Cadastros
+            _lista_Cadastros = self.listaPerfilProdutor.cadastros
         self.listbox_Cadastros.delete(0, tk.END)
         for _r in _lista_Cadastros:
-            self.listbox_Cadastros.insert(tk.END, f"{_r.nome}")
-        self.selecionar()
+            self.listbox_Cadastros.insert(tk.END, f"{_r.fazenda}")
+        self.selecionar()"""
+        pass
 
     def __limpar_campos(self):
         self.entry_nome.config(state='normal')
@@ -167,8 +168,8 @@ class CadastrosView:
         self.__btn_adicionar.config(text='Adicionar')
 
     def __limpar_filtro(self):
-        self.caderno = CadernoCadastros()
-        self.__filtro_ingrediente.set("")
+        self.listaPerfilProdutor = ControllerPerfilProdutor()
+        self.__filtro_fazenda.set("")
         self.item_selecionado = ""
         self.atualizar_listbox()
 
@@ -177,7 +178,7 @@ class CadastrosView:
         if not _Cadastro_selecionada:
             return
         self.item_selecionado = self.listbox_Cadastros.get(_Cadastro_selecionada)
-        _Cadastro_selecionada = self.caderno.buscar_por_nome(self.item_selecionado)
+        _Cadastro_selecionada = self.listaPerfilProdutor.buscar_por_nome(self.item_selecionado)
 
         self.entry_nome.config(state='normal')
         self.entry_nome.delete(0, tk.END)
@@ -209,7 +210,7 @@ class CadastrosView:
             _nova_Cadastro = self.__montar_Cadastro()
             if not _nova_Cadastro:
                 return
-            elif self.caderno.criar(_nova_Cadastro):
+            elif self.listaPerfilProdutor.criar(_nova_Cadastro):
                 self.atualizar_listbox()
                 messagebox.showinfo("Sucesso", f"Cadastro '{_nova_Cadastro.nome}' adicionada.")
             else:
@@ -221,7 +222,7 @@ class CadastrosView:
             return
         _nova_Cadastro = self.__montar_Cadastro()
         if _nova_Cadastro:
-            if self.caderno.alterar(_nova_Cadastro):
+            if self.listaPerfilProdutor.alterar(_nova_Cadastro):
                 messagebox.showinfo("Sucesso", f"Cadastro '{_nova_Cadastro.nome}' atualizada.")
             else:
                 messagebox.showerror("Erro", "Falha ao atualizar. Verifique duplicidade de nome.")
@@ -232,8 +233,8 @@ class CadastrosView:
             messagebox.showwarning("Aviso", "Selecione uma Cadastro para remover.")
             return
         _i = _Cadastro_selecionada[0]
-        _nome = self.caderno.consultar(_i).nome
-        if self.caderno.deletar(_nome):
+        _nome = self.listaPerfilProdutor.consultar(_i).nome
+        if self.listaPerfilProdutor.deletar(_nome):
             self.atualizar_listbox()
             messagebox.showinfo("Sucesso", f"Cadastro '{_nome}' removida.")
         else:
@@ -245,7 +246,7 @@ class CadastrosView:
             messagebox.showwarning("Aviso", "Selecione uma Cadastro para imprimir.")
             return
         _i = _Cadastro_selecionada[0]
-        _Cadastro = self.caderno.consultar(_i)
+        _Cadastro = self.listaPerfilProdutor.consultar(_i)
 
         _caminho = filedialog.asksaveasfilename(
             title="Salvar Cadastro como PDF",
