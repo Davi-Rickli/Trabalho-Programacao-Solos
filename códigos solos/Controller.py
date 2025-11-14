@@ -121,3 +121,4 @@ class ControllerPerfilProdutor:
             if _Cadastro.produtor.lower() == _produtor.lower():
                 return _Cadastro
         return None
+.
