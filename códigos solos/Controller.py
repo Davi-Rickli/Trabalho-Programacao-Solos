@@ -52,6 +52,7 @@ class ControllerPerfilProdutor:
                     _cadastros.append(_registro)
                 return _cadastros
 
+
     def __salvar_Cadastros(self):
         """
         Salva as Cadastros atuais no arquivo JSON.
@@ -78,9 +79,9 @@ class ControllerPerfilProdutor:
         :return: True se adicionada ou False se duplicada.
         """
         try:
-            if self.buscar_por_produtor(Cadastro.produtor):
+            if self.buscar_por_produtor(_perfil.produtor):
                 return False
-            self.cadastros.append(Cadastro)
+            self.cadastros.append(_perfil)
             self.__salvar_Cadastros()
             return True
         except ValueError as ve:
