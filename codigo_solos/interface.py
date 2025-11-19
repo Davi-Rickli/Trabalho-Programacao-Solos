@@ -160,6 +160,12 @@ class CadastrosView:
         fazenda = self.e_fazenda.get("1.0", "end-1c").strip()
         talhao = self.e_talhao.get().strip()
         solo = self.e_solo.get().strip()
+        ph = self.quimicos["ph"].get().strip()
+        p = self.quimicos["p"].get().strip()
+        k = self.quimicos["k"].get().strip()
+        mg = self.quimicos["mg"].get().strip()
+        ca = self.quimicos["ca"].get().strip()
+        s = self.quimicos["s"].get().strip()
 
         if not produtor:
             messagebox.showerror("Erro", "O campo PRODUTOR é obrigatório.")
@@ -177,6 +183,30 @@ class CadastrosView:
             messagebox.showerror("Erro", "Selecione o TIPO DE SOLO.")
             return None
 
+        if not ph:
+            messagebox.showerror("Erro", "O campo PH é obrigatório.")
+            return None
+
+        if not p:
+            messagebox.showerror("Erro", "O campo P é obrigatório.")
+            return None
+
+        if not k:
+            messagebox.showerror("Erro", "O campo K é obrigatório.")
+            return None
+
+        if not mg:
+            messagebox.showerror("Erro", "O campo Mg é obrigatório.")
+            return None
+
+        if not ca:
+            messagebox.showerror("Erro", "O campo Ca é obrigatório.")
+            return None
+
+        if not s:
+            messagebox.showerror("Erro", "O campo S é obrigatório.")
+            return None
+
         try:
             ph = float(self.quimicos["ph"].get())
             p = float(self.quimicos["p"].get())
@@ -184,8 +214,17 @@ class CadastrosView:
             mg = float(self.quimicos["mg"].get())
             ca = float(self.quimicos["ca"].get())
             s = float(self.quimicos["s"].get())
+
         except:
             messagebox.showerror("Erro", "Os valores químicos devem ser números.")
+            return None
+
+        try:
+            produtor = str(self.e_produtor["produtor"].get())
+            fazenda = str(self.e_fazenda["fazenda"].get())
+
+        except:
+            messagebox.showerror("Erro", "Os campos Produtor e Fazenda devem ser em formado de texto.")
             return None
 
         return PerfilProdutor(
