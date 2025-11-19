@@ -156,23 +156,46 @@ class CadastrosView:
             pass
 
     def montar_perfil(self):
+        produtor = self.e_produtor.get().strip()
+        fazenda = self.e_fazenda.get("1.0", "end-1c").strip()
+        talhao = self.e_talhao.get().strip()
+        solo = self.e_solo.get().strip()
+
+        if not produtor:
+            messagebox.showerror("Erro", "O campo PRODUTOR é obrigatório.")
+            return None
+
+        if not fazenda:
+            messagebox.showerror("Erro", "O campo FAZENDA é obrigatório.")
+            return None
+
+        if not talhao:
+            messagebox.showerror("Erro", "O campo TALHÃO é obrigatório.")
+            return None
+
+        if not solo:
+            messagebox.showerror("Erro", "Selecione o TIPO DE SOLO.")
+            return None
+
         try:
-            return PerfilProdutor(
-                self.e_produtor.get(),
-                self.e_solo.get(),
-                self.e_fazenda.get("1.0", "end-1c"),
-                self.e_talhao.get(),
-                float(self.quimicos["ph"].get()),
-                float(self.quimicos["p"].get()),
-                float(self.quimicos["k"].get()),
-                float(self.quimicos["mg"].get()),
-                float(self.quimicos["ca"].get()),
-                float(self.quimicos["s"].get()),
-                self.e_data.get()
-            )
+            ph = float(self.quimicos["ph"].get())
+            p = float(self.quimicos["p"].get())
+            k = float(self.quimicos["k"].get())
+            mg = float(self.quimicos["mg"].get())
+            ca = float(self.quimicos["ca"].get())
+            s = float(self.quimicos["s"].get())
         except:
             messagebox.showerror("Erro", "Os valores químicos devem ser números.")
             return None
+
+        return PerfilProdutor(
+            produtor,
+            solo,
+            fazenda,
+            talhao,
+            ph, p, k, mg, ca, s,
+            self.e_data.get()
+        )
 
     def adicionar(self):
         perfil = self.montar_perfil()
