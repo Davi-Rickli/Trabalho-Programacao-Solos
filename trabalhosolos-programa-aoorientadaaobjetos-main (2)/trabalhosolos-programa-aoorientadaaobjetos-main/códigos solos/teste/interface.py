@@ -12,24 +12,20 @@ class CadastrosView:
         self.root = root
         self.root.title("Cadastro de Análise de Solo")
 
-        # TENTAR ABRIR MAXIMIZADO
         try:
-            self.root.state("zoomed")          # Windows
+            self.root.state("zoomed")
         except:
             try:
-                self.root.attributes("-zoomed", True)  # Linux
+                self.root.attributes("-zoomed", True)
             except:
-                self.root.geometry("1200x700")  # fallback caso não funcione
+                self.root.geometry("1200x700")
 
         self.controller = ControllerPerfilProdutor()
 
-        # Criar interface
         self._criar_interface()
 
-        # Permitir que tudo expanda quando maximiza
         self._configurar_expansao()
 
-        # Listar registros
         self._listar()
 
     def _configurar_expansao(self):
@@ -48,22 +44,18 @@ class CadastrosView:
         self.frame = tk.Frame(self.root, padx=10, pady=10)
         self.frame.pack(fill="both", expand=True)
 
-        # PRODUTOR
         tk.Label(self.frame, text="Produtor:").grid(row=0, column=0, sticky="e")
         self.e_produtor = tk.Entry(self.frame)
         self.e_produtor.grid(row=0, column=1, pady=3, sticky="ew")
 
-        # FAZENDA
         tk.Label(self.frame, text="Fazenda / Observações:").grid(row=1, column=0, sticky="ne")
         self.e_fazenda = tk.Text(self.frame, height=3)
         self.e_fazenda.grid(row=1, column=1, pady=3, sticky="nsew")
 
-        # TALHÃO
         tk.Label(self.frame, text="Talhão:").grid(row=2, column=0, sticky="e")
         self.e_talhao = tk.Entry(self.frame)
         self.e_talhao.grid(row=2, column=1, pady=3, sticky="ew")
 
-        # SOLO
         tk.Label(self.frame, text="Tipo de Solo:").grid(row=3, column=0, sticky="e")
         self.e_solo = ttk.Combobox(
             self.frame,
@@ -75,7 +67,6 @@ class CadastrosView:
         )
         self.e_solo.grid(row=3, column=1, pady=3, sticky="ew")
 
-        # CAMPOS QUÍMICOS
         campos = ["PH", "P", "K", "Mg", "Ca", "S"]
         self.quimicos = {}
 
@@ -87,7 +78,6 @@ class CadastrosView:
             self.quimicos[c.lower()] = e
             linha += 1
 
-        # DATA COLETA
         tk.Label(self.frame, text="Data da Coleta:").grid(row=linha, column=0, sticky="e")
         self.e_data = DateEntry(self.frame, date_pattern="dd/mm/yyyy")
         self.e_data.grid(row=linha, column=1, pady=3, sticky="w")
@@ -157,7 +147,13 @@ class CadastrosView:
 
     def montar_perfil(self):
         produtor = self.e_produtor.get().strip()
+        if not produtor:
+            messagebox.showerror("Erro", "Os campos Produtor e Fazenda devem ser em formado de texto.")
+            return None
         fazenda = self.e_fazenda.get("1.0", "end-1c").strip()
+        if not fazenda:
+            messagebox.showerror("Erro", "Os campos Produtor e Fazenda devem ser em formado de texto.")
+            return None
         talhao = self.e_talhao.get().strip()
         solo = self.e_solo.get().strip()
         ph = self.quimicos["ph"].get().strip()
@@ -217,14 +213,6 @@ class CadastrosView:
 
         except:
             messagebox.showerror("Erro", "Os valores químicos devem ser números.")
-            return None
-
-        try:
-            produtor = str(self.e_produtor["produtor"].get())
-            fazenda = str(self.e_fazenda["fazenda"].get())
-
-        except:
-            messagebox.showerror("Erro", "Os campos Produtor e Fazenda devem ser em formado de texto.")
             return None
 
         return PerfilProdutor(
